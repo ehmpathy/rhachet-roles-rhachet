@@ -34,8 +34,46 @@ rhx keyrack status --owner ehmpath
 ### get a specific key
 
 ```sh
+# vibes output (default, human-readable)
+rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep
+
+# json output (programmatic use)
 rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --json
+rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --output json
+
+# raw value output (pipe-friendly, no final newline)
+rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --value
+rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --output value
 ```
+
+| mode | stdout | stderr | use case |
+|------|--------|--------|----------|
+| `vibes` | turtle treestruct | — | human inspection |
+| `json` | JSON structure | errors | programmatic parse |
+| `value` | raw secret | vibes on failure | pipe to commands |
+
+### source credentials into shell
+
+```sh
+# source all repo keys into shell
+eval "$(rhx keyrack source --env prep --owner ehmpath)"
+
+# source single key
+eval "$(rhx keyrack source --key XAI_API_KEY --env prep --owner ehmpath)"
+
+# strict mode (default): fail if any key absent
+eval "$(rhx keyrack source --env prep --owner ehmpath --strict)"
+
+# lenient mode: source what's available, skip absent
+eval "$(rhx keyrack source --env prep --owner ehmpath --lenient)"
+```
+
+### exit codes
+
+| code | means |
+|------|-------|
+| 0 | granted (or lenient mode success) |
+| 2 | not granted (absent/locked/blocked) |
 
 ### common errors
 
@@ -48,49 +86,75 @@ rhx keyrack get --owner ehmpath --key XAI_API_KEY --env prep --json
 
 ---
 
-## typescript sdk pattern
+## typescript patterns
+
+### source credentials
 
 ```ts
 import { keyrack } from 'rhachet/keyrack';
-import type { BrainSuppliesXai } from 'rhachet-brains-xai';
 
 /**
- * .what = fetch xai credentials from keyrack with fail-fast semantics
- * .why = xai is the default brain; credentials should come from keyrack
+ * .what = source credentials into process.env with fail-fast semantics
+ * .why = credentials should come from keyrack; strict mode fails if absent
  */
-export const getXaiCredsFromKeyrack = async (): Promise<{
-  supplier: { 'brain.supplier.xai': BrainSuppliesXai };
-}> => {
-  // keyrack.get checks env vars first, then keyrack
-  const { attempt, emit } = await keyrack.get({
+export const sourceKeyrackCreds = async (): Promise<void> => {
+  // source all repo keys into process.env (strict: fail if any absent)
+  await keyrack.source({
     owner: 'ehmpath',
     env: 'prep',
-    key: 'XAI_API_KEY',
+    mode: 'strict',
   });
 
-  // fail-fast if not granted
-  if (attempt.status !== 'granted') {
-    console.error(emit.stderr);
-    process.exit(2);
-  }
-
-  // return supplier with credentials
-  const apiKey = attempt.grant.key.secret;
-  return {
-    supplier: {
-      'brain.supplier.xai': {
-        creds: async () => ({ XAI_API_KEY: apiKey }),
-      },
-    },
-  };
+  // now process.env.XAI_API_KEY is available
 };
 ```
 
+### sdk modes
+
+| mode | behavior |
+|------|----------|
+| `strict` | fail if any key absent (default) |
+| `lenient` | source available keys, skip absent |
+
+### sdk vs cli
+
+| sdk | cli |
+|-----|-----|
+| `keyrack.source({ mode: 'strict' })` | `keyrack source --strict` |
+| `keyrack.source({ mode: 'lenient' })` | `keyrack source --lenient` |
+| `keyrack.source({ key: 'API_KEY' })` | `keyrack source --key API_KEY` |
+
 ---
 
-## shell skill pattern
+## shell patterns
 
-from `src/domain.roles/mechanic/skills/git.commit/keyrack.operations.sh`:
+### source credentials
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# source credentials into environment (strict: fail if absent)
+eval "$(rhx keyrack source --env prep --owner ehmpath)"
+
+# now use them directly
+gh api --header "Authorization: token $GITHUB_TOKEN" ...
+```
+
+### get single key
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# fetch raw value (no jq needed)
+TOKEN=$(rhx keyrack get --owner ehmpath --key GITHUB_TOKEN --env prep --value)
+
+# use it
+gh api --header "Authorization: token $TOKEN" ...
+```
+
+### reusable operations file
 
 ```bash
 #!/usr/bin/env bash
@@ -99,41 +163,18 @@ from `src/domain.roles/mechanic/skills/git.commit/keyrack.operations.sh`:
 # .why = single source of truth for token fetch logic
 ######################################################################
 
-fetch_github_token() {
-  local repo_root
-  repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || repo_root="."
-
-  # unlock the key first
-  "$repo_root/node_modules/.bin/rhachet" keyrack unlock \
-    --owner ehmpath \
-    --key EHMPATHY_SEATURTLE_GITHUB_TOKEN \
-    --env prep >/dev/null 2>&1 || true
-
-  # get the token
-  local keyrack_output
-  keyrack_output=$("$repo_root/node_modules/.bin/rhachet" keyrack get \
-    --owner ehmpath \
-    --key EHMPATHY_SEATURTLE_GITHUB_TOKEN \
-    --env prep \
-    --json 2>&1) || return 1
-
-  echo "$keyrack_output" | jq -r '.grant.key.secret // empty'
-}
-
 require_github_token() {
+  # fetch raw value (exit 2 if not granted)
   local token
-  token=$(fetch_github_token)
-
-  if [[ -z "$token" ]]; then
+  token=$(rhx keyrack get --owner ehmpath --key GITHUB_TOKEN --env prep --value) || {
     echo "" >&2
     echo "🐢 bummer dude..." >&2
     echo "" >&2
     echo "🔐 github token not found" >&2
     echo "   ├─ run: rhx keyrack unlock --owner ehmpath --env prep" >&2
     echo "   └─ then retry this command" >&2
-    exit 1
-  fi
-
+    exit 2
+  }
   echo "$token"
 }
 ```
@@ -141,7 +182,7 @@ require_github_token() {
 usage in a skill:
 
 ```bash
-source "$SKILL_DIR/../git.commit/keyrack.operations.bash"
+source "$SKILL_DIR/../git.commit/keyrack.operations.sh"
 TOKEN=$(require_github_token)
 ```
 
@@ -151,7 +192,7 @@ TOKEN=$(require_github_token)
 
 | status | what it means | action |
 |--------|---------------|--------|
-| `granted` | key available | use `grant.grant.key.secret` |
+| `granted` | key available | use `attempt.grant.key.secret` |
 | `locked` | keyrack locked | run unlock command |
 | `absent` | key not found | check key name |
 | `blocked` | access denied | check permissions |
@@ -194,8 +235,8 @@ personal keyrack requires yubikey — robots cannot unlock it.
 ```ts
 // src/contract/cli/review.ts
 export const review = async (): Promise<void> => {
-  // 1. fetch credentials before brain init
-  await getXaiCredsFromKeyrack();
+  // 1. source credential into process.env
+  await keyrack.source({ owner: 'ehmpath', env: 'prep', key: 'XAI_API_KEY', mode: 'strict' });
 
   // 2. create brain context (now has env var)
   const brain = await genContextBrain({ choice: 'xai/grok/code-fast-1' });
@@ -211,12 +252,37 @@ export const review = async (): Promise<void> => {
 #!/usr/bin/env bash
 set -euo pipefail
 
-# source keyrack operations
-source "$SKILL_DIR/../git.commit/keyrack.operations.bash"
+# option 1: source all keys (preferred)
+eval "$(rhx keyrack source --env prep --owner ehmpath)"
+gh api --header "Authorization: token $GITHUB_TOKEN" ...
 
-# fetch token (fail-fast if not available)
-TOKEN=$(require_github_token)
-
-# use token
+# option 2: fetch single key with --value
+TOKEN=$(rhx keyrack get --owner ehmpath --key GITHUB_TOKEN --env prep --value)
 gh api --header "Authorization: token $TOKEN" ...
+```
+
+---
+
+## shell escape safety
+
+secrets are escaped for safe shell eval:
+
+| secret | escaped output |
+|--------|----------------|
+| `secret` | `'secret'` |
+| `sec'ret` | `'sec'\''ret'` |
+| `line1\nline2` | `$'line1\nline2'` |
+
+this prevents injection attacks with `eval "$(keyrack source ...)"`.
+
+---
+
+## ci/cd pattern
+
+```bash
+# strict (default): fail build if any credential absent
+eval "$(rhx keyrack source --env prod --owner cicd --strict)"
+
+# lenient: continue with available credentials
+eval "$(rhx keyrack source --env test --owner dev --lenient)"
 ```
