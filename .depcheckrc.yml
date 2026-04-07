@@ -21,6 +21,12 @@ ignores:
   - yalc
   - "@anthropic-ai/claude-code"
   - rhachet-roles-rhachet
+  - rhachet-roles-bhrain
   - rhachet-roles-bhuild
   - rhachet-roles-ehmpathy
   - rhachet-brains-anthropic
+  - rhachet-brains-openai
+  - rhachet-brains-xai
+  - "@types/archiver"
+  - test-fns
+  - uuid-fns
