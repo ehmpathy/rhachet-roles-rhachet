@@ -1,0 +1,8 @@
+org: ehmpathy
+extends:
+  - .agent/repo=bhrain/role=reviewer/keyrack.yml
+  - .agent/repo=ehmpathy/role=mechanic/keyrack.yml
+env.prod: null
+env.test: null
+env.all:
+  - XAI_API_KEY

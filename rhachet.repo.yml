@@ -1,0 +1,9 @@
+slug: rhachet
+readme: dist/domain.roles/readme.md
+roles:
+  - slug: enroller
+    readme: dist/domain.roles/enroller/readme.md
+    briefs:
+      dirs: dist/domain.roles/enroller/briefs
+    skills:
+      dirs: dist/domain.roles/enroller/skills

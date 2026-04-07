@@ -1,0 +1,50 @@
+{
+  // run these slowpokes individually, cause they're the longest poles in the wall time
+  "explicit": [
+    // review skill tests with llm calls
+    {
+      "patterns": [
+        "blackbox/review.representative-clean.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.representative-dirty.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.exhaustive-dirty.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.refs-glob.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.refs-single.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.output-mkdir.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.output-default.acceptance.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "blackbox/review.rules-only-default.acceptance.test.ts"
+      ]
+    }
+  ],
+  // fast validation tests run on three shards
+  "dynamic": {
+    "shards": 3
+  }
+}

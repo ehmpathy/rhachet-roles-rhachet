@@ -1,0 +1,102 @@
+{
+  // run these slowpokes individually, cause they're the longest poles in the wall time
+  "explicit": [
+    // stepReflect tests
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.casePriorRules.default.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.casePriorRules.grok-4.1-fast.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.caseTypescriptQuality.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.caseProseAuthor.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/reflect/stepReflect.caseUnclearFeedback.integration.test.ts"
+      ]
+    },
+    // stepReview tests
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.claude-sonnet.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrainChoice.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.grok-code-fast-1.case1.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.grok-code-fast-1.case2.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseBrain.grok-code-fast-1.case3.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/domain.operations/review/stepReview.caseGoalExhaustive.integration.test.ts"
+      ]
+    },
+    // brain/sdk tests
+    {
+      "patterns": [
+        "src/domain.operations/brain.replic.arch1/core/invokeBrainArch1.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/access/sdk/sdkOpenAi.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/access/sdks/anthropic/sdkAnthropic.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/access/sdks/qwen/sdkQwen.integration.test.ts"
+      ]
+    },
+    {
+      "patterns": [
+        "src/_topublish/rhachet/genContextBrainChoice.integration.test.ts"
+      ]
+    }
+  ],
+  // run the rest on three shards
+  "dynamic": {
+    "shards": 3
+  }
+}
