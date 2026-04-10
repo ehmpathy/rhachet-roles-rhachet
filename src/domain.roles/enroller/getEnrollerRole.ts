@@ -17,4 +17,15 @@ export const ROLE_ENROLLER: Role = Role.build({
   briefs: {
     dirs: [{ uri: __dirname + '/briefs' }],
   },
+  hooks: {
+    onBrain: {
+      onBoot: [
+        {
+          command:
+            './node_modules/.bin/rhachet roles boot --repo rhachet --role enroller',
+          timeout: 'PT60S',
+        },
+      ],
+    },
+  },
 });
