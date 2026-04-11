@@ -7,3 +7,4 @@ roles:
       dirs: dist/domain.roles/enroller/briefs
     skills:
       dirs: dist/domain.roles/enroller/skills
+    boot: dist/domain.roles/enroller/boot.yml

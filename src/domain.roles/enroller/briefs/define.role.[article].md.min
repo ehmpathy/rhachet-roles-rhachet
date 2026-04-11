@@ -1,0 +1,78 @@
+# role = skills + briefs
+
+```
+🧢 role = 💪 skills + 📚 briefs
+```
+
+- 💪 skills = executable capabilities (shell, typescript)
+- 📚 briefs = curated knowledge (rules, guides, lessons)
+
+## enrollment
+
+```
+🧢 role + 🧠 brain = 🎭 actor
+```
+
+actors can:
+- `.ask()` → 💧 fluid thought, brain decides path
+- `.act()` → 🔩 rigid thought, harness controls
+- `.run()` → 🪨 solid execution, no brain
+
+## Role.build()
+
+```ts
+Role.build({
+  slug: 'reviewer',
+  name: 'Reviewer',
+  purpose: 'review artifacts against rules',
+  readme: { uri: __dirname + '/readme.md' },
+  boot: { uri: __dirname + '/boot.yml' },
+  keyrack: { uri: __dirname + '/keyrack.yml' },
+  skills: { dirs: [{ uri: __dirname + '/skills' }] },
+  briefs: { dirs: [{ uri: __dirname + '/briefs' }] },
+});
+```
+
+## directory structure
+
+```
+src/domain.roles/reviewer/
+  readme.md
+  getReviewerRole.ts
+  boot.yml
+  keyrack.yml
+  briefs/
+  skills/
+```
+
+## boot.yml
+
+controls context load at session start:
+
+```yaml
+always:
+  briefs:
+    say:  # full content in context
+      - briefs/core.[guide].md
+    ref:  # path only, fetch on demand
+      - briefs/reference.[ref].md
+```
+
+## keyrack.yml
+
+declares credentials per environment:
+
+```yaml
+org: ehmpathy
+env.prep:
+  - XAI_API_KEY
+```
+
+## briefs flavor brain
+
+supply: tone, terms, patterns, rules
+
+## skills curate skillset
+
+offload imagine-cost → compute-cost
+brains probabilistic, skills deterministic

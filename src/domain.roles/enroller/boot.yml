@@ -1,0 +1,23 @@
+always:
+  briefs:
+    say:
+      - briefs/define.role.[article].md
+      - briefs/philosophy.roles.[philosophy].md
+      - briefs/howto.write.skills-stdout.[guide].md
+      - briefs/howto.create-routes.[guide].md
+    ref:
+      - briefs/define.mascots-and-artifacts.[article].md
+      - briefs/howto.add.boot-yml.[guide].md
+      - briefs/howto.add.briefs.[guide].md
+      - briefs/howto.add.hooks.[guide].md
+      - briefs/howto.add.keyrack.[guide].md
+      - briefs/howto.add.portable-skills.[guide].md
+      - briefs/howto.add.role-hooks.[guide].md
+      - briefs/howto.add.skills.[guide].md
+      - briefs/howto.add.test-skills.[guide].md
+      - briefs/howto.define.mascot-persona.[guide].md
+      - briefs/howto.use.brains.[guide].md
+      - briefs/howto.use.build-pipeline.[guide].md
+      - briefs/howto.use.check-role-costs.[guide].md
+      - briefs/howto.use.keyrack.[guide].md
+      - briefs/rule.forbid.stdout-on-errors.[guide].md

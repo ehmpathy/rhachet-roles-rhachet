@@ -9,6 +9,7 @@ export const ROLE_ENROLLER: Role = Role.build({
   name: 'Enroller',
   purpose: 'create and scaffold new roles',
   readme: { uri: __dirname + '/readme.md' },
+  boot: { uri: __dirname + '/boot.yml' },
   traits: [],
   skills: {
     dirs: [{ uri: __dirname + '/skills' }],

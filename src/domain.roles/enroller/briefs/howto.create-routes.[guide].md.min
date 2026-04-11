@@ -1,0 +1,174 @@
+# howto: create thought routes
+
+## .what
+guide for create new thought routes: directories, stones, guards, and bind commands.
+
+## .why
+enable self-serve route creation without reverse-engineer extant routes.
+
+---
+
+## concepts
+
+| concept | what | file |
+|---------|------|------|
+| route | sequence of milestones | `.route/v$isodate.$slug/` |
+| stone | single milestone | `N.name.stone` |
+| guard | validation gate (`artifacts:`, `protect:`, `judges:`, `reviews:`) | `N.name.guard` |
+
+---
+
+## example stone
+
+`3.3.1.blueprint.product.stone`:
+
+    ```markdown
+    propose a blueprint for how we will implement the wish
+    - in $BEHAVIOR_DIR_REL/0.wish.md
+    - with $BEHAVIOR_DIR_REL/3.2.distill.domain.*.yield.md (if declared)
+    - with $BEHAVIOR_DIR_REL/3.2.distill.repros.experience.*.yield.md (if declared)
+
+    .why = blueprint the code changes needed to deliver the product.
+
+    ---
+
+    ## summary
+    ## filediff tree
+    ## codepath tree
+    ## test coverage
+
+    ---
+
+    reference
+    - $BEHAVIOR_DIR_REL/0.wish.md
+    - $BEHAVIOR_DIR_REL/1.vision.md (if declared)
+    - ...
+
+    ---
+
+    emit into $BEHAVIOR_DIR_REL/3.3.1.blueprint.product.yield.md
+    ```
+
+ref: `rhx git.repo.get lines --in ehmpathy/rhachet-roles-bhuild --paths 'src/**/3.3.1.blueprint.product.stone'`
+
+---
+
+## example guard
+
+`3.3.1.blueprint.product.guard`:
+
+    ```yaml
+    artifacts:
+      - $route/3.3.1.blueprint.product.yield.md
+
+    protect:
+      - src/**/*
+
+    judges:
+      - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route
+      - rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+
+    reviews:
+      peer:
+        - npx rhachet run --repo bhrain --skill review --rules '.agent/**/rule.*.md' --paths '$route/3.3.blueprint.*.md' --output '$route/.reviews/$stone.peer-review.md'
+
+      self:
+        - slug: has-research-traceability
+          say: |
+            does the blueprint trace back to research? ...
+
+        # ... (12 more self reviews)
+    ```
+
+ref: `rhx git.repo.get lines --in ehmpathy/rhachet-roles-bhuild --paths 'src/**/3.3.1.blueprint.product.guard*'`
+
+---
+
+## commands
+
+| command | purpose |
+|---------|---------|
+| `rhx route.bind.set --route $path` | bind route |
+| `rhx route.bind.get` | show bound route |
+| `rhx route.bind.del` | unbind |
+| `rhx route.drive` | show next stone |
+| `rhx route.stone.set --stone $name --as passed` | mark complete |
+
+---
+
+## guard syntax
+
+| section | what |
+|---------|------|
+| `artifacts:` | files stone must produce |
+| `protect:` | files stone must not modify until passed |
+| `judges:` | commands to verify driver can pass gate |
+| `reviews:` | peer + self reviews |
+
+```yaml
+artifacts:
+  - $route/3.1.a*.md
+
+protect:
+  - src/**/*
+
+judges:
+  - rhx route.stone.judge --mechanism reviewed? --stone $stone --route $route
+  - rhx route.stone.judge --mechanism approved? --stone $stone --route $route
+
+reviews:
+  peer:
+    - npx rhachet run --repo bhrain --skill review --output '$route/.reviews/$stone.peer-review.md'
+
+  self:
+    - slug: has-questioned-requirements
+      say: |
+        are there any requirements that should be questioned?
+```
+
+### peer vs self
+
+| type | format | who |
+|------|--------|-----|
+| peer | shell commands | external brains |
+| self | structured prompts (`say: \|` enables multiline) | internal brains |
+
+### judges
+
+| mechanism | what | required |
+|-----------|------|----------|
+| `reviewed?` | peer reviewers satisfied | when peer reviews exist |
+| `approved?` | human approval received | when human sign-off needed |
+
+### variables
+
+| var | expands to |
+|-----|------------|
+| `$route` | route directory path |
+| `$stone` | stone name |
+| `$hash` | content hash |
+
+---
+
+## parallel stones
+
+same numeric prefix = parallel: `3.1.a.stone`, `3.1.b.stone`
+route advances when ALL parallel stones pass
+
+---
+
+## variants
+
+- `.route/` — default
+- `.behavior/` — behavior-driven
+- `.$custom/` — custom
+
+---
+
+## nested routes
+
+when a stone's work requires its own route:
+1. create sub-route in separate directory
+2. rebind: `rhx route.bind.set --route .route/v$date.$subroute`
+3. complete sub-route
+4. rebind to parent: `rhx route.bind.set --route .route/v$date.$parent`

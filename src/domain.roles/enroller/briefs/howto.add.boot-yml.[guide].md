@@ -56,6 +56,22 @@ use `say` sparingly — context window is finite. use `ref` for material the bra
 
 ---
 
+## .md.min files
+
+briefs can have condensed `.md.min` variants to reduce token costs. rhachet auto-detects these — you don't need to specify `.md.min` in boot.yml:
+
+```yaml
+# boot.yml
+always:
+  briefs:
+    say:
+      - briefs/howto.create-routes.[guide].md  # loads .md.min if it exists
+```
+
+if `briefs/howto.create-routes.[guide].md.min` exists, rhachet loads it instead of the full version.
+
+---
+
 ## add boot.yml to a role
 
 1. create `boot.yml` in role directory:
