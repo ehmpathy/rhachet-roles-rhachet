@@ -18,6 +18,59 @@ enable self-serve route creation without reverse-engineer extant routes.
 
 ---
 
+## workflow
+
+1. **create** route directory: `.route/v$isodate.$slug/`
+2. **add** stones: `1.name.stone`, `2.name.stone`, etc.
+3. **add** guards (optional): `1.name.guard`, etc.
+4. **bind** route to branch: `rhx route.bind.set --route .route/v$isodate.$slug`
+
+**critical**: step 4 is required. without a bind, the driver won't know the route exists.
+
+### skills that initialize routes
+
+skills that create routes MUST also bind them:
+
+```sh
+rhx route.bind.set --route "$ROUTE_PATH"
+```
+
+if a skill creates a route but does not bind it, the route will be orphaned.
+
+### example skill stdouts
+
+(tip: don't forget to snapshot them for vibechecks!)
+
+**init.behavior**:
+```
+🦫 oh, behave!
+   ├─ + 0.wish.md
+   ├─ + 1.vision.stone
+   ...
+
+🍄 we'll remember,
+   ├─ branch feature/my-feature <-> behavior v2026_04_11.my-feature
+   └─ branch bound to route, to drive via hooks
+```
+
+**declapract.upgrade init**:
+```
+🐢 radical!
+
+🐚 declapract.upgrade init
+   ├─ route: .route/v2026_04_11.declapract.upgrade/ ✨
+   └─ created
+      ├─ 1.upgrade.invoke.stone
+      ...
+
+🥥 hang ten! we'll ride this in
+   └─ branch main <-> route .route/v2026_04_11.declapract.upgrade
+```
+
+both show: files created, bind confirmed (`branch <-> route`), driver will drive.
+
+---
+
 ## example stone
 
 `3.3.1.blueprint.product.stone`:

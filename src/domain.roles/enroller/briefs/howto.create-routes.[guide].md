@@ -32,6 +32,86 @@ yaml with `artifacts:`, `protect:`, `judges:`, and/or `reviews:`.
 
 ---
 
+## workflow
+
+1. **create** route directory: `.route/v$isodate.$slug/`
+2. **add** stones: `1.name.stone`, `2.name.stone`, etc.
+3. **add** guards (optional): `1.name.guard`, etc.
+4. **bind** route to branch: `rhx route.bind.set --route .route/v$isodate.$slug`
+
+**critical**: step 4 is required. without a bind, the driver won't know the route exists.
+
+```sh
+rhx route.bind.set --route .route/v2026_04_11.my-feature
+```
+
+### skills that initialize routes
+
+skills that create routes MUST also bind them. the skill must call:
+
+```sh
+rhx route.bind.set --route "$ROUTE_PATH"
+```
+
+if a skill creates a route but does not bind it, the driver will not drive it — the route will be orphaned.
+
+### example skill stdouts
+
+(tip: don't forget to snapshot them for vibechecks!)
+
+skills that initialize routes should produce stdout that:
+1. shows what was created
+2. confirms the bind happened
+3. hints at what's next
+
+**init.behavior** (from rhachet-roles-bhuild):
+
+```
+🦫 oh, behave!
+   ├─ + 0.wish.md
+   ├─ + 1.vision.guard
+   ├─ + 1.vision.stone
+   ├─ + 2.1.criteria.blackbox.stone
+   ...
+   └─ + refs/template.[feedback].v1.[given].by_human.md
+
+🌲 go on then,
+   ├─ .behavior/v2026_04_11.my-feature/0.wish.md
+   └─ tip: use --open to open the wish automatically
+
+🍄 we'll remember,
+   ├─ branch feature/my-feature <-> behavior v2026_04_11.my-feature
+   ├─ branch bound to behavior, to boot via hooks
+   └─ branch bound to route, to drive via hooks
+```
+
+**declapract.upgrade init** (from rhachet-roles-ehmpathy):
+
+```
+🐢 radical!
+
+🐚 declapract.upgrade init
+   ├─ route: .route/v2026_04_11.declapract.upgrade/ ✨
+   └─ created
+      ├─ 1.upgrade.invoke.stone
+      ├─ 2.detect.hazards.stone
+      ├─ 2.detect.hazards.guard
+      ├─ 3.1.repair.test.defects.stone
+      ├─ 3.1.repair.test.defects.guard
+      ...
+      └─ 3.4.reflect.cicd.defects.guard
+
+🥥 hang ten! we'll ride this in
+   └─ branch main <-> route .route/v2026_04_11.declapract.upgrade
+```
+
+both examples show:
+- what was scaffolded (files created)
+- confirmation of bind (branch <-> route)
+- the driver will now pick up the route via hooks
+
+---
+
 ## example stone
 
 `3.3.1.blueprint.product.stone` from rhachet-roles-bhuild:
