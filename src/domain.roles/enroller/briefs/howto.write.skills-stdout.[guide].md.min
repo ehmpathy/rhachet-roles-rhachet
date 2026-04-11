@@ -1,0 +1,103 @@
+# skill stdout: two-header structure
+
+1. **mascot header** — registry-level, sets vibe
+2. **artifact header** — role-level, shows resolved inputs
+
+## structure
+
+```
+🪨 run solid skill repo={registry}/role={role}/skill={skill}   ← rhachet emits
+
+{mascot} {vibe phrase}                                         ← skill emits all else
+
+{artifact} {skill-name} [--resolved --flags]
+   ├─ {input}: {value}
+   └─ {output section}
+```
+
+| header | emoji | scope | purpose |
+|--------|-------|-------|---------|
+| mascot | 🐢 🦉 🐙 | registry | set vibe |
+| artifact | 🐚 📚 🎭 | role | name skill, show inputs |
+
+## mascot vibe phrases
+
+### 🐢 sea turtle (ehmpathy)
+- plan: `heres the wave...`
+- success: `cowabunga!`, `righteous!`, `sweet`
+- blocked: `bummer dude...`
+
+### 🦉 owl (bhrain)
+- plan: `perched to observe...`
+- success: `observed`, `noted`
+- blocked: `path obscured...`
+
+### 🐙 octopus (rhachet)
+- plan: `arms ready...`
+- success: `enrolled!`, `attached!`
+- blocked: `tangled...`
+
+## artifact header
+
+shows exact inputs after defaults:
+
+```
+🐚 git.release --into prod --mode plan
+```
+
+## treestruct body
+
+| element | purpose |
+|---------|---------|
+| `├─` | branch with siblings |
+| `└─` | final branch |
+| `│` | continuation |
+
+## examples
+
+### ehmpathy (sea turtle)
+```
+🐢 sweet
+
+🐚 globsafe --pattern 'src/**/*.ts' --path '.'
+   ├─ pattern: src/**/*.ts
+   ├─ files: 4
+   └─ found
+      ├─
+      │
+      │  src/index.ts
+      │  src/domain.ts
+      │
+      └─
+```
+
+### bhrain (owl)
+```
+🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .behavior/v2026_04_11.cicd-deflake-route
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   └─ here's the stone
+      ├─
+      │
+      ...
+```
+
+## bash pattern
+
+```bash
+echo "🐢 sweet"
+echo ""
+echo "🐚 ${SKILL_NAME}"
+echo "   ├─ input1: ${INPUT1}"
+echo "   └─ results"
+```

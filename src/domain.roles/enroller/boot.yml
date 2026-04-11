@@ -4,6 +4,7 @@ always:
       - briefs/define.role.[article].md
       - briefs/philosophy.roles.[philosophy].md
       - briefs/howto.write.skills-stdout.[guide].md
+      - briefs/howto.create-routes.[guide].md
     ref:
       - briefs/define.mascots-and-artifacts.[article].md
       - briefs/howto.add.boot-yml.[guide].md

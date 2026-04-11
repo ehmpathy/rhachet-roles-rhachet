@@ -16,9 +16,9 @@ skill stdout follows a two-header structure:
 ## .structure
 
 ```
-🪨 run solid skill repo={registry}/role={role}/skill={skill}
+🪨 run solid skill repo={registry}/role={role}/skill={skill}   ← rhachet emits
 
-{mascot} {vibe phrase}
+{mascot} {vibe phrase}                                         ← skill emits all else
 
 {artifact} {skill-name} [--resolved --flags --after --defaults]
    ├─ {input}: {value}
@@ -193,6 +193,28 @@ use sub.bucket for multiline content. requires blank `│` lines for visual spac
       │  src/index.ts
       │
       └─
+```
+
+### success — route.drive (bhrain)
+
+```
+🦉 where were we?
+
+🗿 route.drive
+   ├─ where do we go?
+   │  ├─ route = .behavior/v2026_04_11.cicd-deflake-route
+   │  └─ stone = 1.vision
+   │
+   ├─ are you here?
+   │  ├─ when ready for review, run:
+   │  │  └─ rhx route.stone.set --stone 1.vision --as arrived
+   │  └─ when ready to continue, run:
+   │     └─ rhx route.stone.set --stone 1.vision --as passed
+   │
+   └─ here's the stone
+      ├─
+      │
+      ...
 ```
 
 ### success — git.repo.get
