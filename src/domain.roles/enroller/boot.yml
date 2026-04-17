@@ -5,7 +5,10 @@ always:
       - briefs/philosophy.roles.[philosophy].md
       - briefs/howto.write.skills-stdout.[guide].md
       - briefs/howto.create-routes.[guide].md
+      - briefs/rule.require.rule-directive-prefix.md
     ref:
+      - briefs/define.rules.[article].md
+      - briefs/howto.create-rules.[lesson].md
       - briefs/define.mascots-and-artifacts.[article].md
       - briefs/howto.add.boot-yml.[guide].md
       - briefs/howto.add.briefs.[guide].md
